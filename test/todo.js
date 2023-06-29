@@ -1,0 +1,16 @@
+(async ()=>{
+	var Todo = require('../src/todo')
+	var check = require("check")
+	var JsonFile = require("jsonfile")
+	var jsonfile = new JsonFile('./test/todo.json')
+	var todo = new Todo(jsonfile)
+	check(true,true)
+	await todo.add({id:1,subject:"todo 1"})
+	// return 
+	check(await todo.reload(),[{id:1,subject:"todo 1"}],'reload failure',true)
+	check(await todo.remove({id:1}),{id:1},'todo.remove failure',true)
+	check(await todo.reload(),[],'reload failure',true)
+	await todo.clear()
+	check(await todo.reload(),[],'reload failure',true)
+	check(1,0,"OK")
+})()
