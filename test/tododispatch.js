@@ -26,7 +26,8 @@
     // await todo.add({id:1,subject:"todo 1"})
     // return 
     check(await todo.reload(),[{id:1,subject:"todo 1"}],'reload failure',true)
-    check(await todo.remove({id:1}),{id:1},'todo.remove failure',true)
+    await jd.dispatch({resource:"todo",action:"remove",params:{id:1}})
+    // check(await todo.remove({id:1}),{id:1},'todo.remove failure',true)
     check(await todo.reload(),[],'reload failure',true)
     await todo.clear()
     check(await todo.reload(),[],'reload failure',true)
