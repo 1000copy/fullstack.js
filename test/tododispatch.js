@@ -31,5 +31,5 @@
     check(await todo.reload(),[],'reload failure',true)
     await todo.clear()
     check(await todo.reload(),[],'reload failure',true)
-    check(1,0,"OK")
+    check("OK")
 })()
