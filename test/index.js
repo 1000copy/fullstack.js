@@ -57,7 +57,7 @@ function dirname(){
 	await j.write(jj)
 	var r = await j.read()
 	check(jj,r,'json file content is not []',true)
-	await j.clear()
+	// await j.clear()
 	check("test", await dirname(),"not equal to test of path",true)
 })()
 

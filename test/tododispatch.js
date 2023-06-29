@@ -19,7 +19,7 @@
     var Todo = require('../src/todo')
     var check = require("check")
     var JsonFile = require("jsonfile")
-    var jsonfile = new JsonFile('./test/todo.json')
+    var jsonfile = new JsonFile('./db/todo.json')
     var todo = new Todo(jsonfile)
     jd.register('todo',todo)
     await jd.dispatch({resource:"todo",action:"add",params:{id:1,subject:"todo 1"}})

@@ -2,7 +2,7 @@
 	var Todo = require('../src/todo')
 	var check = require("check")
 	var JsonFile = require("jsonfile")
-	var jsonfile = new JsonFile('./test/todo.json')
+	var jsonfile = new JsonFile('./db/todo.json')
 	var todo = new Todo(jsonfile)
 	check(true,true)
 	await todo.add({id:1,subject:"todo 1"})
