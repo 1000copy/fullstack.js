@@ -34,9 +34,17 @@ const server = http.createServer((req, res) => {
 
   let fileName = req.url;
   if(req.url == '/echo'){
+    const chunks = [];
+    req.on("data", (chunk) => {
+      chunks.push(chunk);
+    });
+    req.on("end", () => {
+      const data = Buffer.concat(chunks);
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify([{a:1}]));
-      return 
+      var json = JSON.parse(data)
+      res.end(JSON.stringify(json));
+    });
+    return 
   }
   if (req.url === '/') fileName = 'index.html';
   else if (!extension) {
