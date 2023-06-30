@@ -33,6 +33,11 @@ const server = http.createServer((req, res) => {
   }
 
   let fileName = req.url;
+  if(req.url == '/echo'){
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify([{a:1}]));
+      return 
+  }
   if (req.url === '/') fileName = 'index.html';
   else if (!extension) {
     try {
