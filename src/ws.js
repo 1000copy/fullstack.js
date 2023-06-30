@@ -18,8 +18,25 @@ const types = {
 };
 
 const root = path.normalize(path.resolve(directoryName));
-
-const server = http.createServer((req, res) => {
+async function parsejson(req){
+   return new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on("error", (error) => {
+      reject(error)
+    });
+    req.on("data", (chunk) => {
+      chunks.push(chunk);
+    });
+    req.on("end", () => {
+      const data = Buffer.concat(chunks);
+      // res.writeHead(200, { 'Content-Type': 'application/json' });
+      var json = JSON.parse(data)
+      resolve(json)
+      // res.end(JSON.stringify(json));
+    });
+   })
+}
+const server = http.createServer(async(req, res) => {
   console.log(`${req.method} ${req.url}`);
 
   const extension = path.extname(req.url).slice(1);
@@ -34,16 +51,18 @@ const server = http.createServer((req, res) => {
 
   let fileName = req.url;
   if(req.url == '/echo'){
-    const chunks = [];
-    req.on("data", (chunk) => {
-      chunks.push(chunk);
-    });
-    req.on("end", () => {
-      const data = Buffer.concat(chunks);
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      var json = JSON.parse(data)
-      res.end(JSON.stringify(json));
-    });
+    // const chunks = [];
+    // req.on("data", (chunk) => {
+    //   chunks.push(chunk);
+    // });
+    // req.on("end", () => {
+    //   const data = Buffer.concat(chunks);
+    //   res.writeHead(200, { 'Content-Type': 'application/json' });
+    //   var json = JSON.parse(data)
+    //   res.end(JSON.stringify(json));
+    // });
+    var json = await parserjson(req)
+    res.end(JSON.stringify(json));
     return 
   }
   if (req.url === '/') fileName = 'index.html';
