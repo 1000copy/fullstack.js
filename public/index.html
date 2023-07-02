@@ -12,6 +12,48 @@ async function echo(){
   	// return data;
 	alert(JSON.stringify(data))
 }	
+async function list(){
+	const response = await fetch('/api',{
+		headers: {
+	      'Accept': 'application/json',
+	      'Content-Type': 'application/json'
+	    },
+	    method: "POST",
+	    body: JSON.stringify({resource:"todo",action:"list",params:{}})
+	});
+  	const data = await response.json();
+  	// return data;
+	alert(JSON.stringify(data))
+}
+async function add(){
+	const response = await fetch('/api',{
+		headers: {
+	      'Accept': 'application/json',
+	      'Content-Type': 'application/json'
+	    },
+	    method: "POST",
+	    body: JSON.stringify({resource:"todo",action:"add",params:{id:Date.now(),subject:"todo1"}})
+	});
+  	const data = await response.json();
+  	// return data;
+	alert(JSON.stringify(data))
+}
+async function remove(){
+	const response = await fetch('/api',{
+		headers: {
+	      'Accept': 'application/json',
+	      'Content-Type': 'application/json'
+	    },
+	    method: "POST",
+	    body: JSON.stringify({resource:"todo",action:"remove",params:{id:1688269425396}})
+	});
+  	const data = await response.json();
+  	// return data;
+	alert(JSON.stringify(data))
+}
 </script>
 hello world.
 <button onclick="echo()">echo</button>
+<button onclick="list()">list</button>
+<button onclick="add()">add</button>
+<button onclick="remove()">remove</button>

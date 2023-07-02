@@ -18,7 +18,7 @@ const types = {
 };
 
 const root = path.normalize(path.resolve(directoryName));
-async function parsejson(req){
+async function parserjson(req){
    return new Promise((resolve, reject) => {
     const chunks = [];
     req.on("error", (error) => {
@@ -29,13 +29,12 @@ async function parsejson(req){
     });
     req.on("end", () => {
       const data = Buffer.concat(chunks);
-      // res.writeHead(200, { 'Content-Type': 'application/json' });
       var json = JSON.parse(data)
       resolve(json)
-      // res.end(JSON.stringify(json));
     });
    })
 }
+var jd;
 const server = http.createServer(async(req, res) => {
   console.log(`${req.method} ${req.url}`);
 
@@ -51,18 +50,16 @@ const server = http.createServer(async(req, res) => {
 
   let fileName = req.url;
   if(req.url == '/echo'){
-    // const chunks = [];
-    // req.on("data", (chunk) => {
-    //   chunks.push(chunk);
-    // });
-    // req.on("end", () => {
-    //   const data = Buffer.concat(chunks);
-    //   res.writeHead(200, { 'Content-Type': 'application/json' });
-    //   var json = JSON.parse(data)
-    //   res.end(JSON.stringify(json));
-    // });
     var json = await parserjson(req)
+    res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(json));
+    return 
+  }
+  if(req.url == '/api'){
+    var json = await parserjson(req)
+    var result = await jd.dispatch(json)
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(result));
     return 
   }
   if (req.url === '/') fileName = 'index.html';
@@ -98,5 +95,11 @@ const server = http.createServer(async(req, res) => {
 });
 
 server.listen(port, () => {
-  console.log(`Server is listening on port ${port}`);
+    console.log(`Server is listening on port ${port}`);
+    var Todo = require('../src/todo')
+    var JsonFile = require("jsonfile")
+    jd = require('dispatch')
+    var jsonfile = new JsonFile('./db/todo.json')
+    var todo = new Todo(jsonfile)
+    jd.register('todo',todo)
 });
