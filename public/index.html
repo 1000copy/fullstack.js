@@ -1,4 +1,30 @@
+<body onload="onload()">
+	hello todo-app
+	<input type="text" placeholder="subject here" id="text"></input>
+	<button onclick="echo()">echo</button>
+	<button onclick="list()">list</button>
+	<button onclick="add()">add</button>
+	<button onclick="remove()">remove</button>
+	<ul id="list">
+		<li>li</li>
+	</ul>
+</body>
 <script type="text/javascript">
+	function onload(){
+		// init here
+	}
+async function list(){
+	var data = (await getlist()).data
+	await dolist("list",data)
+}
+function dolist(elementid,options){
+	// console.log(options)
+	var m = []
+	for (var i = 0; i < options.length; i += 1){
+        m[i] = '<li>' + options[i].subject + `<button onclick="remove(${options[i].id})">remove</button></li>`;
+    }
+	document.getElementById(elementid).innerHTML =  m.join("") ;
+}
 async function echo(){
 	const response = await fetch('/echo',{
 		headers: {
@@ -12,7 +38,7 @@ async function echo(){
   	// return data;
 	alert(JSON.stringify(data))
 }	
-async function list(){
+async function getlist(){
 	const response = await fetch('/api',{
 		headers: {
 	      'Accept': 'application/json',
@@ -22,38 +48,36 @@ async function list(){
 	    body: JSON.stringify({resource:"todo",action:"list",params:{}})
 	});
   	const data = await response.json();
-  	// return data;
-	alert(JSON.stringify(data))
+  	return data;
+	// alert(JSON.stringify(data))
 }
 async function add(){
+	var value = document.getElementById('text').value
 	const response = await fetch('/api',{
 		headers: {
 	      'Accept': 'application/json',
 	      'Content-Type': 'application/json'
 	    },
 	    method: "POST",
-	    body: JSON.stringify({resource:"todo",action:"add",params:{id:Date.now(),subject:"todo1"}})
+	    body: JSON.stringify({resource:"todo",action:"add",params:{id:Date.now(),subject:value}})
 	});
   	const data = await response.json();
   	// return data;
-	alert(JSON.stringify(data))
+	// alert(JSON.stringify(data))
+	list()
 }
-async function remove(){
+async function remove(id){
 	const response = await fetch('/api',{
 		headers: {
 	      'Accept': 'application/json',
 	      'Content-Type': 'application/json'
 	    },
 	    method: "POST",
-	    body: JSON.stringify({resource:"todo",action:"remove",params:{id:1688269425396}})
+	    body: JSON.stringify({resource:"todo",action:"remove",params:{id:id}})
 	});
   	const data = await response.json();
   	// return data;
-	alert(JSON.stringify(data))
+	// alert(JSON.stringify(data))
+	list()
 }
 </script>
-hello world.
-<button onclick="echo()">echo</button>
-<button onclick="list()">list</button>
-<button onclick="add()">add</button>
-<button onclick="remove()">remove</button>
