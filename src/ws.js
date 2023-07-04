@@ -51,8 +51,10 @@ const server = http.createServer(async(req, res) => {
   let fileName = req.url;
   if(req.url == '/echo'){
     var json = await parserjson(req)
+    // var result = {data:json}
+    console.log(result)
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(json));
+    res.end(JSON.stringify({data:json}));
     return 
   }
   if(req.url == '/api'){
