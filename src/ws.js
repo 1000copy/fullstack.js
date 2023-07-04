@@ -34,10 +34,7 @@ async function parserjson(req){
     });
    })
 }
-var jd;
-const server = http.createServer(async(req, res) => {
-  console.log(`${req.method} ${req.url}`);
-
+function static(req,res){
   const extension = path.extname(req.url).slice(1);
   const type = extension ? types[extension] : types.html;
   const supportedExtension = Boolean(type);
@@ -49,21 +46,7 @@ const server = http.createServer(async(req, res) => {
   }
 
   let fileName = req.url;
-  if(req.url == '/echo'){
-    var json = await parserjson(req)
-    // var result = {data:json}
-    console.log(result)
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({data:json}));
-    return 
-  }
-  if(req.url == '/api'){
-    var json = await parserjson(req)
-    var result = await jd.dispatch(json)
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(result));
-    return 
-  }
+  
   if (req.url === '/') fileName = 'index.html';
   else if (!extension) {
     try {
@@ -94,6 +77,26 @@ const server = http.createServer(async(req, res) => {
       res.end(data);
     }
   });
+}
+var jd;
+const server = http.createServer(async(req, res) => {
+  console.log(`${req.method} ${req.url}`);
+  if(req.url == '/echo'){
+    var json = await parserjson(req)
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({data:json}));
+    console.log(`req:${JSON.stringify(json)},res:${JSON.stringify(json)}`)
+    return 
+  }
+  if(req.url == '/api'){
+    var json = await parserjson(req)
+    var result = await jd.dispatch(json)
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(result));
+    console.log(`req:${JSON.stringify(json)},res:${JSON.stringify(result)}`)
+    return 
+  }
+  static(req,res)
 });
 
 server.listen(port, () => {
