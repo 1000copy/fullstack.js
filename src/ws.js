@@ -79,12 +79,6 @@ function static(req,res){
   });
 }
 var jd;
-var Todo = require('../src/todo')
-    var JsonFile = require("jsonfile")
-    jd = require('dispatch')
-    var jsonfile = new JsonFile('./db/todo.json')
-    var todo = new Todo(jsonfile)
-    jd.register('todo',todo)
 const server = http.createServer(async(req, res) => {
   console.log(`${req.method} ${req.url}`);
   if(req.url == '/echo'){
@@ -107,5 +101,10 @@ const server = http.createServer(async(req, res) => {
 
 server.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
-    
+    var Todo = require('../src/todo')
+    var JsonFile = require("jsonfile")
+    jd = require('dispatch')
+    var jsonfile = new JsonFile('./db/todo.json')
+    var todo = new Todo(jsonfile)
+    jd.register('todo',todo)
 });
