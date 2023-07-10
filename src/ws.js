@@ -1,8 +1,11 @@
 const fs = require('fs');
 const http = require('http');
 const path = require('path');
+var Todo = require('../src/todo')
+var JsonFile = require("../lib/jsonfile")
+    jd = require('../lib/dispatch')
 
-const port = 80;
+const port =  process.env.PORT || 3000;
 const directoryName = './public';
 
 const types = {
@@ -101,9 +104,6 @@ const server = http.createServer(async(req, res) => {
 
 server.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
-    var Todo = require('../src/todo')
-    var JsonFile = require("jsonfile")
-    jd = require('dispatch')
     var jsonfile = new JsonFile('./db/todo.json')
     var todo = new Todo(jsonfile)
     jd.register('todo',todo)
