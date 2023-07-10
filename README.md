@@ -1,4 +1,6 @@
-# fullstack.js - 升级JS急速教程的目标和WBS任务分解
+# fullstack.js - 大纲
+
+升级JS急速教程的目标和WBS任务分解
 
     
 ## 目标
