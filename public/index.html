@@ -1,16 +1,36 @@
+<link rel="manifest" href="manifest.json" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="application-name" content="PWA Workshop" />
+<meta name="apple-mobile-web-app-title" content="PWA Workshop" />
+<meta name="msapplication-starturl" content="/index.html" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no"
+/>
 <link rel='stylesheet' href='https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.css'>
  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.css"> 
-<style>ul {
-list-style: none;
-}</style>
+<style>
+	ul {
+	list-style: none;
+	}
+	#list{
+		margin-top:20px;
+	}
+	.grid-container {
+	  margin-left: 0px;
+	  display: grid;
+	  grid-template-columns: 30px 30px auto;
+	}
+</style>
 <body onload="onload()">
-	<h1><i class="fas fa-camera"></i>TodoApp</h1>
+	<h1><i class="fas fa-list"></i>TodoApp</h1>
 	<input type="text" placeholder="subject here" id="text"></input>
-	<button onclick="add()">Add</button>
-	<button onclick="echo()">Clear</button>
-	<ul id="list">
+	<button onclick="add()"><i class="fas fa-plus"></i></button>
+	<button onclick="clear1()"><i class="fas fa-trash"></i></button>
+	<div id="list">
 		<li>li</li>
-	</ul>
+	</div>
 </body>
 <script type="text/javascript">
 	function onload(){
@@ -25,12 +45,22 @@ async function list(){
 	var options = data
 	var m = []
 	for (var i = 0; i < options.length; i += 1){
-        m[i] = `<li><button onclick="remove(${options[i].id})">Del</button><input type="checkbox"/>${options[i].subject}</li>`;
+		var checked = options[i].checked?"checked":""
+        m[i] = `
+        <div class="grid-container">
+	        <div><i onclick="remove(${options[i].id})" class="fas fa-minus"></i></div>
+	        <div><input type="checkbox" onclick="docheck(${options[i].id})" ${checked}/></div>
+	        <div>${options[i].subject}</div>
+        </div>
+        `;
     }
 	document.getElementById(elementid).innerHTML =  m.join("") ;
 }
 function log(str){
 	// console.log(str)
+}
+function echo1(){
+	alert(1)
 }
 async function echo(){
 	var json = {a:1}
@@ -69,10 +99,23 @@ async function add(){
 	var json = {resource:"todo",action:"add",params:{id:Date.now(),subject:value}}
 	var data = await dodispatch(json)
   	list()
+  	document.getElementById('text').value = ""
+}
+async function docheck(id){
+	// var value = document.getElementById('text').value
+	var json = {resource:"todo",action:"checked",params:{id}}
+	var data = await dodispatch(json)
+  	list()
 }
 async function remove(id){
 	var json = {resource:"todo",action:"remove",params:{id:id}}
-	var data = dodispatch(json)
+	var data = await dodispatch(json)
+	list()
+}
+async function clear1(){
+	// alert(12)
+	var json = {resource:"todo",action:"clear",params:{}}
+	var data = await dodispatch(json)
 	list()
 }
 </script>

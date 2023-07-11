@@ -8,6 +8,14 @@ class Todo {
 		this.db.write(this.json)
 		return o
 	}
+	async checked(o){
+		// await this.reload()
+		var find = this.json.find(function(el) { return el.id == o.id; })
+		find.checked = !find.checked 
+		await this.db.write(this.json)
+		return o
+	}
+	
 	async remove(o){
 		this.json = this.json.filter(function(el) { return el.id != o.id; })
 		await this.db.write(this.json)
