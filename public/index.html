@@ -1,9 +1,13 @@
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.css'>
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.css"> 
+<style>ul {
+list-style: none;
+}</style>
 <body onload="onload()">
-	<b>todo-app</b><br>
-	subject
-	<input type="text" value="subject here" id="text"></input>
-	<button onclick="add()">add</button>
-	<button onclick="echo()">echo</button>
+	<h1><i class="fas fa-camera"></i>TodoApp</h1>
+	<input type="text" placeholder="subject here" id="text"></input>
+	<button onclick="add()">Add</button>
+	<button onclick="echo()">Clear</button>
 	<ul id="list">
 		<li>li</li>
 	</ul>
@@ -21,7 +25,7 @@ async function list(){
 	var options = data
 	var m = []
 	for (var i = 0; i < options.length; i += 1){
-        m[i] = '<li>' + options[i].subject + `<button onclick="remove(${options[i].id})">remove</button></li>`;
+        m[i] = `<li><button onclick="remove(${options[i].id})">Del</button><input type="checkbox"/>${options[i].subject}</li>`;
     }
 	document.getElementById(elementid).innerHTML =  m.join("") ;
 }
