@@ -17,6 +17,14 @@
 	ul {
 	list-style: none;
 	}
+	#menu{
+		display: inline;
+		margin: 0;
+	  padding: 0;	
+	}
+	#menu li{
+		float: left;
+	}
 	#list{
 		margin-top:20px;
 	}
@@ -28,17 +36,48 @@
 </style>
 <body onload="onload()">
 	<h1><i class="fas fa-list"></i>TodoApp</h1>
-	<div id="select">
-		
-	</div>
-	<input type="text" placeholder="subject here" id="text"></input>
-	<button onclick="todo.add()"><i class="fas fa-plus"></i></button>
-	<button onclick="todo.clear1()"><i class="fas fa-trash"></i></button>
-	<div id="list">
-		<li>li</li>
-	</div>
+	<ul id="menu"><li><a href="#" onclick="showtodo()"> Todo</a></li><li><a href="#" onclick="showproject()">Project</a></li><li>About</li></ul>
+	<div id="root"></div>
+	<template id="todo">
+		<div id="select">
+			
+		</div>
+		<input type="text" placeholder="subject here" id="text"></input>
+		<button onclick="todo.add()"><i class="fas fa-plus"></i></button>
+		<button onclick="todo.clear1()"><i class="fas fa-trash"></i></button>
+		<div id="list">
+			<li>li</li>
+		</div>	
+	</template>
+	<template id="project">
+		<input type="text" placeholder="project name here" id="text"></input>
+		<button onclick="todo.add()"><i class="fas fa-plus"></i></button>
+		<button onclick="todo.clear1()"><i class="fas fa-trash"></i></button>
+		<div id="list">
+			<li>li</li>
+		</div>	
+	</template>
 </body>
 <script type="text/javascript">
+	async function showtodo(){
+		const root = document.querySelector("#root");
+	  const template = document.querySelector("#todo");
+	  const clone = template.content.cloneNode(true);
+	  root.innerHTML = ""
+	  root.appendChild(clone);
+	  todo.list()
+		var p1 = await dodispatch({resource:"project",action:"list",params:{}})
+		var p2 = p1.map(x=>`<option value="${x.id}">${x.name}</option>`)
+		document.getElementById("select").innerHTML = 
+		`<select id="ps">${p2.join()}</select>`
+	}
+	async function showproject(){
+		const root = document.querySelector("#root");
+	  const template = document.querySelector("#project");
+	  const clone = template.content.cloneNode(true);
+	  root.innerHTML = ""
+	  root.appendChild(clone);
+	}
 	var todo = new class{
 		async add(){
 			var value = document.getElementById('text').value
@@ -104,10 +143,6 @@
 		// alert(JSON.stringify(data))
 	}
 	async function onload(){
-		todo.list()
-		var p1 = await dodispatch({resource:"project",action:"list",params:{}})
-		var p2 = p1.map(x=>`<option value="${x.id}">${x.name}</option>`)
-		document.getElementById("select").innerHTML = 
-		`<select id="ps">${p2.join()}</select>`
+		await showtodo()
 	}
 </script>
