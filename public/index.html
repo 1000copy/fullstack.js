@@ -1,8 +1,8 @@
 <link rel="manifest" href="manifest.json" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="application-name" content="PWA Workshop" />
-<meta name="apple-mobile-web-app-title" content="PWA Workshop" />
+<meta name="application-name" content="Summer Todo" />
+<meta name="apple-mobile-web-app-title" content="Summer Todo" />
 <meta name="msapplication-starturl" content="/index.html" />
 <meta
   name="viewport"
@@ -47,14 +47,13 @@ async function list(){
 	for (var i = 0; i < options.length; i += 1){
 		var checked = options[i].checked?"checked":""
         m[i] = `
-        <div class="grid-container">
-	        <div><i onclick="remove(${options[i].id})" class="fas fa-minus"></i></div>
-	        <div><input type="checkbox" onclick="docheck(${options[i].id})" ${checked}/></div>
+            <div><i onclick="remove(${options[i].id})" class="fas fa-minus"></i></div>
+	        <div><input type="checkbox" onclick="docheck(${options[i].id},this.checked)" ${checked}/></div>
 	        <div>${options[i].subject}</div>
-        </div>
+        
         `;
     }
-	document.getElementById(elementid).innerHTML =  m.join("") ;
+	document.getElementById(elementid).innerHTML = `<div class="grid-container id="container">`+ m.join("") +`</div>`
 }
 function log(str){
 	// console.log(str)
@@ -100,10 +99,12 @@ async function add(){
 	var data = await dodispatch(json)
   	list()
   	document.getElementById('text').value = ""
+  	// document.getElementById("container").append("<button>acdkdkdkk</button")
 }
-async function docheck(id){
+async function docheck(id,checked){
 	// var value = document.getElementById('text').value
-	var json = {resource:"todo",action:"checked",params:{id}}
+	// let checked = document.getElementById('checked').value
+	var json = {resource:"todo",action:"checked",params:{id,checked}}
 	var data = await dodispatch(json)
   	list()
 }

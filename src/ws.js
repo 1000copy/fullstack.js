@@ -2,8 +2,8 @@ const fs = require('fs');
 const http = require('http');
 const path = require('path');
 var Todo = require('../src/todo')
-var JsonFile = require("../lib/jsonfile")
-    jd = require('../lib/dispatch')
+// var JsonFile = require("../lib/jsonfile")
+var jd = require('../lib/dispatch')
 
 const port =  process.env.PORT || 3000;
 const directoryName = './public';
@@ -104,7 +104,9 @@ const server = http.createServer(async(req, res) => {
 
 server.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
-    var jsonfile = new JsonFile('./db/todo.json')
-    var todo = new Todo(jsonfile)
+    // var jsonfile = new JsonFile('./db/todo.json')
+    const db = require('better-sqlite3')('./db/foobar.db', {});
+    var todo = new Todo(db)
+    // todo.init()
     jd.register('todo',todo)
 });

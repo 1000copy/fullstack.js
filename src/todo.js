@@ -1,4 +1,39 @@
-class Todo {
+class Todo{
+	constructor(db){
+		this.db = db
+		this.init()
+	}
+	list(){
+		var ls = this.db.prepare('SELECT * FROM todo ').all();
+		ls.forEach(element => element.checked = !! element.checked );
+		return ls
+	}
+	add(params){
+		const sm = this.db.prepare("insert into todo values(?,?,?)")
+		sm.run(params.id,params.subject,params.checked?1:0)
+	}
+	remove(params){
+		const sm = this.db.prepare("delete from todo where id = ?")
+		sm.run(params.id)
+	}
+	async checked(params){
+		const sm = this.db.prepare("update todo set checked = ? where id = ?")
+		sm.run(params.checked?1:0,params.id)
+	}
+	fin(){
+		this.db.close()
+	}
+	clear(){
+		const sm = this.db.prepare("delete from todo")
+		sm.run()	
+	}
+	init(){
+		const sm = this.db.prepare("create table IF NOT EXISTS todo(id integer,subject text,checked integer)")
+		sm.run()	
+	}
+}
+// json
+class Todo1 {
 	list(){
 		return this.json
 	}

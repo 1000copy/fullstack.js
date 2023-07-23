@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/1000copy/fullstack.js/issues"
   },
-  "homepage": "https://github.com/1000copy/fullstack.js#readme"
+  "homepage": "https://github.com/1000copy/fullstack.js#readme",
+  "dependencies": {
+    "better-sqlite3": "^8.4.0"
+  }
 }
