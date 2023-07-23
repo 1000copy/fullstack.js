@@ -11,6 +11,9 @@
 <link rel='stylesheet' href='https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.css'>
  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.css"> 
 <style>
+	i {
+	    cursor: pointer;
+	}
 	ul {
 	list-style: none;
 	}
@@ -20,103 +23,91 @@
 	.grid-container {
 	  margin-left: 0px;
 	  display: grid;
-	  grid-template-columns: 30px 30px auto;
+	  grid-template-columns: 20px 20px auto;
 	}
 </style>
 <body onload="onload()">
 	<h1><i class="fas fa-list"></i>TodoApp</h1>
+	<div id="select">
+		
+	</div>
 	<input type="text" placeholder="subject here" id="text"></input>
-	<button onclick="add()"><i class="fas fa-plus"></i></button>
-	<button onclick="clear1()"><i class="fas fa-trash"></i></button>
+	<button onclick="todo.add()"><i class="fas fa-plus"></i></button>
+	<button onclick="todo.clear1()"><i class="fas fa-trash"></i></button>
 	<div id="list">
 		<li>li</li>
 	</div>
 </body>
 <script type="text/javascript">
-	function onload(){
-		// init here
-		list()
+	var todo = new class{
+		async add(){
+			var value = document.getElementById('text').value
+			var json = {resource:"todo",action:"add",params:{id:Date.now(),subject:value,pid:1}}
+			var data = await dodispatch(json)
+	  	this.list()
+	  	document.getElementById('text').value = ""
+		  	// document.getElementById("container").append("<button>acdkdkdkk</button")
+		}
+		async docheck (id,checked){
+			// var value = document.getElementById('text').value
+			// let checked = document.getElementById('checked').value
+			var json = {resource:"todo",action:"checked",params:{id,checked}}
+			var data = await dodispatch(json)
+		  this.list()
+		}
+		async remove (id){
+			var json = {resource:"todo",action:"remove",params:{id:id}}
+			var data = await dodispatch(json)
+			this.list()
+		}
+		async clear1 (){
+			// alert(12)
+			var json = {resource:"todo",action:"clear",params:{}}
+			var data = await dodispatch(json)
+			this.list()
+		}	
+		async list(){
+			var json = {resource:"todo",action:"list",params:{}}
+			var data = await dodispatch(json)
+			// await dolist("list",data)
+			var elementid = "list"
+			var options = data
+			var m = []
+			for (var i = 0; i < options.length; i += 1){
+				var checked = options[i].checked?"checked":""
+		        m[i] = `
+		            <div><i onclick="todo.remove(${options[i].id})" class="fas fa-square-minus"></i></div>
+			        <div><input type="checkbox" onclick="todo.docheck(${options[i].id},this.checked)" ${checked}/></div>
+			        <div>${options[i].subject}</div>
+		        
+		        `;
+		    }
+			document.getElementById(elementid).innerHTML = `<div class="grid-container id="container">`+ m.join("") +`</div>`
+		}
+	}()
+	async function dodispatch(json){
+		const response = await fetch('/api',{
+			headers: {
+		      'Accept': 'application/json',
+		      'Content-Type': 'application/json'
+		    },
+		    method: "POST",
+		    body: JSON.stringify(json)
+		});
+	  	const result = await response.json();
+	  	// log(result)
+	  	// return data;
+	  	if(result.error)
+	  		throw new Error(result.error)
+	  	else
+	  		return result.data
+		// alert(JSON.stringify(data))
 	}
-async function list(){
-	var json = {resource:"todo",action:"list",params:{}}
-	var data = await dodispatch(json)
-	// await dolist("list",data)
-	var elementid = "list"
-	var options = data
-	var m = []
-	for (var i = 0; i < options.length; i += 1){
-		var checked = options[i].checked?"checked":""
-        m[i] = `
-            <div><i onclick="remove(${options[i].id})" class="fas fa-minus"></i></div>
-	        <div><input type="checkbox" onclick="docheck(${options[i].id},this.checked)" ${checked}/></div>
-	        <div>${options[i].subject}</div>
-        
-        `;
-    }
-	document.getElementById(elementid).innerHTML = `<div class="grid-container id="container">`+ m.join("") +`</div>`
-}
-function log(str){
-	// console.log(str)
-}
-function echo1(){
-	alert(1)
-}
-async function echo(){
-	var json = {a:1}
-	const response = await fetch('/echo',{
-		headers: {
-	      'Accept': 'application/json',
-	      'Content-Type': 'application/json'
-	    },
-	    method: "POST",
-	    body: JSON.stringify(json)
-	});
-  	const result = await response.json();
-  	// log(result)
-  	log(JSON.stringify(result.data))
-}
-async function dodispatch(json){
-	const response = await fetch('/api',{
-		headers: {
-	      'Accept': 'application/json',
-	      'Content-Type': 'application/json'
-	    },
-	    method: "POST",
-	    body: JSON.stringify(json)
-	});
-  	const result = await response.json();
-  	log(result)
-  	// return data;
-  	if(result.error)
-  		throw new Error(result.error)
-  	else
-  		return result.data
-	// alert(JSON.stringify(data))
-}
-async function add(){
-	var value = document.getElementById('text').value
-	var json = {resource:"todo",action:"add",params:{id:Date.now(),subject:value}}
-	var data = await dodispatch(json)
-  	list()
-  	document.getElementById('text').value = ""
-  	// document.getElementById("container").append("<button>acdkdkdkk</button")
-}
-async function docheck(id,checked){
-	// var value = document.getElementById('text').value
-	// let checked = document.getElementById('checked').value
-	var json = {resource:"todo",action:"checked",params:{id,checked}}
-	var data = await dodispatch(json)
-  	list()
-}
-async function remove(id){
-	var json = {resource:"todo",action:"remove",params:{id:id}}
-	var data = await dodispatch(json)
-	list()
-}
-async function clear1(){
-	// alert(12)
-	var json = {resource:"todo",action:"clear",params:{}}
-	var data = await dodispatch(json)
-	list()
-}
+	async function onload(){
+		todo.list()
+		var p1 = await dodispatch({resource:"project",action:"list",params:{}})
+		var p2 = p1.map(x=>`<option value="${x.id}">${x.name}</option>`)
+		document.getElementById("select").innerHTML = 
+		`<select id="ps">${p2.join()}</select>`
+	}
 </script>

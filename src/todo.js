@@ -3,14 +3,25 @@ class Todo{
 		this.db = db
 		this.init()
 	}
-	list(){
-		var ls = this.db.prepare('SELECT * FROM todo ').all();
-		ls.forEach(element => element.checked = !! element.checked );
-		return ls
+	list(params){
+		if(params && params.pid){
+			var ls = this.db.prepare('SELECT * FROM todo where pid = ? ').all(params.pid);
+			ls.forEach(element => element.checked = !! element.checked );
+			return ls
+		}else{
+			var ls = this.db.prepare('SELECT * FROM todo ').all();
+			ls.forEach(element => element.checked = !! element.checked );
+			return ls
+		}
 	}
 	add(params){
-		const sm = this.db.prepare("insert into todo values(?,?,?)")
-		sm.run(params.id,params.subject,params.checked?1:0)
+		if(!params.pid){
+			const sm = this.db.prepare("insert into todo values(?,?,?)")
+			sm.run(params.id,params.subject,params.checked?1:0)
+		}else{
+			const sm = this.db.prepare("insert into todo values(?,?,?,?)")
+			sm.run(params.id,params.subject,params.checked?1:0,params.pid)
+		}
 	}
 	remove(params){
 		const sm = this.db.prepare("delete from todo where id = ?")
@@ -28,7 +39,7 @@ class Todo{
 		sm.run()	
 	}
 	init(){
-		const sm = this.db.prepare("create table IF NOT EXISTS todo(id integer,subject text,checked integer)")
+		const sm = this.db.prepare("create table IF NOT EXISTS todo(id integer,subject text,checked integer,pid integer)")
 		sm.run()	
 	}
 }

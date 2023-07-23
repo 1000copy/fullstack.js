@@ -2,6 +2,7 @@ const fs = require('fs');
 const http = require('http');
 const path = require('path');
 var Todo = require('../src/todo')
+var Project = require('../src/project')
 // var JsonFile = require("../lib/jsonfile")
 var jd = require('../lib/dispatch')
 
@@ -109,4 +110,6 @@ server.listen(port, () => {
     var todo = new Todo(db)
     // todo.init()
     jd.register('todo',todo)
+    var project = new Project(db)
+    jd.register('project',project)
 });
