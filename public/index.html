@@ -51,8 +51,7 @@
 	</template>
 	<template id="project">
 		<input type="text" placeholder="project name here" id="text"></input>
-		<button onclick="todo.add()"><i class="fas fa-plus"></i></button>
-		<button onclick="todo.clear1()"><i class="fas fa-trash"></i></button>
+		<button onclick="project.add()"><i class="fas fa-plus"></i></button>
 		<div id="list">
 			<li>li</li>
 		</div>	
@@ -60,16 +59,17 @@
 </body>
 <script type="text/javascript">
 	async function showtodo(){
+
 		const root = document.querySelector("#root");
 	  const template = document.querySelector("#todo");
 	  const clone = template.content.cloneNode(true);
 	  root.innerHTML = ""
 	  root.appendChild(clone);
-	  todo.list()
-		var p1 = await dodispatch({resource:"project",action:"list",params:{}})
+	  var p1 = await dodispatch({resource:"project",action:"list",params:{}})
 		var p2 = p1.map(x=>`<option value="${x.id}">${x.name}</option>`)
 		document.getElementById("select").innerHTML = 
-		`<select id="ps">${p2.join()}</select>`
+		`<select id="ps" onchange="todo.onchange()">${p2.join()}</select>`
+	  todo.list()
 	}
 	async function showproject(){
 		const root = document.querySelector("#root");
@@ -77,11 +77,13 @@
 	  const clone = template.content.cloneNode(true);
 	  root.innerHTML = ""
 	  root.appendChild(clone);
+	  project.list()
 	}
 	var todo = new class{
 		async add(){
 			var value = document.getElementById('text').value
-			var json = {resource:"todo",action:"add",params:{id:Date.now(),subject:value,pid:1}}
+			var pid = document.getElementById('ps').value
+			var json = {resource:"todo",action:"add",params:{id:Date.now(),subject:value,pid}}
 			var data = await dodispatch(json)
 	  	this.list()
 	  	document.getElementById('text').value = ""
@@ -93,6 +95,9 @@
 			var json = {resource:"todo",action:"checked",params:{id,checked}}
 			var data = await dodispatch(json)
 		  this.list()
+		}
+		onchange(){
+			this.list()
 		}
 		async remove (id){
 			var json = {resource:"todo",action:"remove",params:{id:id}}
@@ -106,7 +111,8 @@
 			this.list()
 		}	
 		async list(){
-			var json = {resource:"todo",action:"list",params:{}}
+			var pid = document.getElementById('ps').value
+			var json = {resource:"todo",action:"list",params:{pid}}
 			var data = await dodispatch(json)
 			// await dolist("list",data)
 			var elementid = "list"
@@ -124,6 +130,46 @@
 			document.getElementById(elementid).innerHTML = `<div class="grid-container id="container">`+ m.join("") +`</div>`
 		}
 	}()
+	var project = new class{
+		async add(){
+			var value = document.getElementById('text').value
+			var json = {resource:"project",action:"add",params:{id:Date.now(),name:value}}
+			var data = await dodispatch(json)
+	  	this.list()
+	  	document.getElementById('text').value = ""
+		}
+		// params {id,name}
+		async remove (params){
+			var json = {resource:"project",action:"remove",params}
+			try{
+				var data = await dodispatch(json)	
+				this.list()
+			}catch(e){
+				alert(e.message)
+			}
+		}
+		async list(){
+			var json = {resource:"project",action:"list",params:{}}
+			var data = await dodispatch(json)
+			var elementid = "list"
+			var options = data
+			var m = []
+			for (var i = 0; i < options.length; i += 1){
+				var checked = options[i].checked?"checked":""
+				var jj = JSON.stringify(options[i])
+				jj = jj.replace(/(\r\n|\n|\r)/gm, "")
+				jj = jj.replaceAll(`"`,`'`)
+				// console.log(jj)
+		    m[i] = `
+		            <div><i onclick="project.remove(${jj})" class="fas fa-square-minus"></i></div>
+			        <div>${options[i].name}</div>
+		        	<div></div>
+		        `;
+		    // console.log(m[i])
+		    }
+			document.getElementById(elementid).innerHTML = `<div class="grid-container id="container">`+ m.join("") +`</div>`
+		}
+	}()
 	async function dodispatch(json){
 		const response = await fetch('/api',{
 			headers: {
@@ -134,10 +180,12 @@
 		    body: JSON.stringify(json)
 		});
 	  	const result = await response.json();
-	  	// log(result)
+	  	// console.log(result)
 	  	// return data;
 	  	if(result.error)
 	  		throw new Error(result.error)
+	  		// alert(result.error)
+	  		// return result.error
 	  	else
 	  		return result.data
 		// alert(JSON.stringify(data))

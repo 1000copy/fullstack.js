@@ -12,6 +12,9 @@ class Project{
 		sm.run(params.id,params.name)
 	}
 	remove(params){
+		var ls = this.db.prepare('SELECT * FROM todo where todo.pid = ?').all(params.id);
+		if(ls.length >0)
+			throw new Error(`project ${params.name} was referenced by todo`)
 		const sm = this.db.prepare("delete from project where id = ?")
 		sm.run(params.id)
 	}
