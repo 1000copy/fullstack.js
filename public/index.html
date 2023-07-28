@@ -79,10 +79,10 @@
 	</template>
 </body>
 <script ype="module">
-	var todo;
+	// var todo;
 	async function showtodo(){
 		var item = await import('./js/todo.js')
-		todo = item.default
+		var todo = item.default
 		const root = document.querySelector("#root");
 	  root.innerHTML = item.default.template
 	  todo.mount()
@@ -92,7 +92,8 @@
 		var obj = item.default
 		const root = document.querySelector("#root");
 	  root.innerHTML = obj.template
-	  item.default.list()
+	  obj.mount()
+	  obj.list()
 	}
 	async function showabout(){
 		var item = await import('./js/about.js')

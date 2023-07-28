@@ -1,16 +1,22 @@
 export default new class{
 		get template(){
+			var b = `<button id="buttonclear"><i class="fas fa-trash"></i></button>`
 			return `<span>Current Project</span><span id="select"></span><br/>
 		<div id="banner">
 			<input type="text" placeholder="subject here" id="text"/>
-			<button onclick="todo.add()"><i class="fas fa-plus"></i></button>
-			<button onclick="todo.clear1()"><i class="fas fa-trash"></i></button>
+			<button id="buttonadd"><i class="fas fa-plus"></i></button>
 		</div>
 		<div id="list">
 			<li>li</li>
-		</div>	`
+		</div>	`;
 		}
 		async mount(){
+			document.querySelector(`#buttonadd`).addEventListener('click',()=>{
+				this.add()
+			})
+			// document.querySelector(`#buttonclear`).addEventListener('click',()=>{
+			// 	this.clear1()
+			// })
 			var p1 = await dodispatch({resource:"project",action:"list",params:{}})
 			var p2 = p1.map(x=>`<option value="${x.id}">${x.name}</option>`)
 			document.getElementById("select").innerHTML = 
@@ -62,12 +68,27 @@ export default new class{
 			for (var i = 0; i < options.length; i += 1){
 				var checked = options[i].checked?"checked":""
 		        m[i] = `
-		            <div><i onclick="todo.remove(${options[i].id})" class="fas fa-square-minus"></i></div>
-			        <div><input type="checkbox" onclick="todo.docheck(${options[i].id},this.checked)" ${checked}/></div>
+		            <div><i id="i${options[i].id}"  class="fas fa-square-minus"></i></div>
+			        <div><input id="c${options[i].id}" type="checkbox"  ${checked}/></div>
 			        <div>${options[i].subject}</div>
 		        
 		        `;
 		    }
 			document.getElementById(elementid).innerHTML = `<div class="grid-container id="container">`+ m.join("") +`</div>`
+			for (var i = 0; i < options.length; i += 1){
+				var a = options[i]
+				document.querySelector(`#i${a.id}`).addEventListener('click',()=>{
+					this.remove(a.id)
+				})
+				var id = `#c${a.id}`
+				var e = document.querySelector(id)
+				var checked = e.checked
+				e.addEventListener('click',(sender)=>{
+					var e = sender.target
+					var checked = e.checked
+					console.log(e,e.id.substring(1),!e.checked)
+					this.docheck(e.id.substring(1),!e.checked)
+				})
+			}
 		}
 	}()

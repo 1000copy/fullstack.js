@@ -29,7 +29,7 @@ class Todo{
 	}
 	async checked(params){
 		const sm = this.db.prepare("update todo set checked = ? where id = ?")
-		sm.run(params.checked?1:0,params.id)
+		sm.run(!params.checked?1:0,params.id)
 	}
 	fin(){
 		this.db.close()
