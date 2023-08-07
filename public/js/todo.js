@@ -16,6 +16,7 @@ export default new class{
 			document.getElementById("select").innerHTML = 
 			`<select id="ps" >${p2.join()}</select>`
 			// console.log(item)
+			// TODO : remove event listener when ?
 			document.getElementById("ps").addEventListener("change",()=>{
 				this.list()
 			})
