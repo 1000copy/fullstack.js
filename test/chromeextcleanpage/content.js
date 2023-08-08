@@ -8,7 +8,9 @@ var selectedElementStack = [];
 Interest Points
 
 1. 如何创建内容脚本？Chrome extension - Content Script
-2. 差别在何处？document.addEventListener vs. addEventListener
+2. 差别在何处？document.addEventListener vs. addEventListener.
+Difference between document.addEventListener and window.addEventListener?
+https://stackoverflow.com/questions/12045440/difference-between-document-addeventlistener-and-window-addeventlistener
 3. 如何注入css和js到当前内容内？
 4. 如何创建后台脚本？ service work script - background script
 5. 如何添加和删除class？
