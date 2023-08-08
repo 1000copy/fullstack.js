@@ -18,6 +18,14 @@ https://stackoverflow.com/questions/12045440/difference-between-document-addeven
 Offical guide : https://developer.chrome.com/docs/extensions/
 
 */
+function copyDivToClipboard(element) {
+    var range = document.createRange();
+    range.selectNode(element);
+    window.getSelection().removeAllRanges(); // clear current selection
+    window.getSelection().addRange(range); // to select text
+    document.execCommand("copy");
+    window.getSelection().removeAllRanges();// to deselect
+}
 addEventListener("keypress", (e) => {
     // console.log(e.key)
     if(e.key == 1){
@@ -53,6 +61,9 @@ addEventListener("keypress", (e) => {
       }
       selectedElement.remove()
       selectedElement = undefined
+    }else if (e.key == 9){
+      if(selectedElement)
+        copyDivToClipboard(selectedElement)
     }
 
   });
