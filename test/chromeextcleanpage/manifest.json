@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "CleanPage",
+  "version": "1.0",
+  "description": "clean page by my hand",
+  "content_scripts": [
+    {
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ]
+    }
+  ]
+}
