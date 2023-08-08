@@ -4,6 +4,18 @@ var selectedElementStack = [];
 //  歪打正着。之前这两个事件，一个忘了addEventListener前面加的document，
 // 结果在chrome扩展内反而可以挂接，而加了document的却不行。因为这点差异，
 // 我就去掉document，发现两个都可以挂接了。
+/*
+Interest Points
+
+1. 如何创建内容脚本？Chrome extension - Content Script
+2. 差别在何处？document.addEventListener vs. addEventListener
+3. 如何注入css和js到当前内容内？
+4. 如何创建后台脚本？ service work script - background script
+5. 如何添加和删除class？
+
+Offical guide : https://developer.chrome.com/docs/extensions/
+
+*/
 addEventListener("keypress", (e) => {
     // console.log(e.key)
     if(e.key == 1){
