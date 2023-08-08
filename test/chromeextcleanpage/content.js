@@ -1,5 +1,9 @@
 var  selectedElement;
 var selectedElementStack = [];
+//2023-8-17reco
+//  歪打正着。之前这两个事件，一个忘了addEventListener前面加的document，
+// 结果在chrome扩展内反而可以挂接，而加了document的却不行。因为这点差异，
+// 我就去掉document，发现两个都可以挂接了。
 addEventListener("keypress", (e) => {
     // console.log(e.key)
     if(e.key == 1){
