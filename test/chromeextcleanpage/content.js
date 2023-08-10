@@ -64,6 +64,20 @@ addEventListener("keypress", (e) => {
     }else if (e.key == 9){
       if(selectedElement)
         copyDivToClipboard(selectedElement)
+    }else if(e.key == 8){
+        var t=document.title
+        e=window.location.href
+        n=document.createElement("a");
+        n.setAttribute("href",e)
+        n.innerText=`[${t}](${e})`
+        document.body.appendChild(n);
+        var r=document.createRange()
+        o=window.getSelection()
+        r.selectNode(n)
+        o.removeAllRanges()
+        o.addRange(r)
+        document.execCommand("copy")
+        document.body.removeChild(n)
     }
 
   });
