@@ -53,12 +53,34 @@ addEventListener("keypress", (e) => {
       element.classList.add('selected')
       selectedElement = element
     }else if (e.key == 0){
-      console.log(2)
+      // console.log(2)
       if(selectedElementStack.length == 0 )selectedElementStack = [] ;
-      console.log(3)
+      // console.log(3)
       if (selectedElement){
         selectedElement.classList.remove('selected')
       }
+      // save to sync storage as key :[xpath]
+      var key = window.location.href
+      var xpath = getDomPath(selectedElement)
+      chrome.storage.sync.get(key).then((result) => {
+        if(result[key] == undefined){
+          var value = []
+          value.push(xpath)
+          var pair = {}
+          pair[key] = value
+          chrome.storage.sync.set(pair).then(() => {
+            console.log("Value is set");
+          });        
+        }else{
+          result[key].push(xpath)
+          var value = result[key]
+          var pair = {}
+          pair[key] = value
+          chrome.storage.sync.set(pair).then(() => {
+            console.log("Value is set");
+          });
+        }
+      });
       selectedElement.remove()
       selectedElement = undefined
     }else if (e.key == 9){
@@ -78,8 +100,16 @@ addEventListener("keypress", (e) => {
         o.addRange(r)
         document.execCommand("copy")
         document.body.removeChild(n)
+    }else if(e.key == 6){
+      var key = window.location.href
+      var value = []
+      var pair = {}
+      pair[key] = value
+      chrome.storage.sync.set(pair).then(() => {
+        console.log(`clear for ${key}`);
+        location.reload()
+      });        
     }
-
   });
 addEventListener('click', e => {
     var x = e.clientX
@@ -115,3 +145,64 @@ addEventListener('click', e => {
   //       "</span>";
   //   }
   // }
+function getDomPath(el) {
+  if (!el) {
+    return;
+  }
+  var stack = [];
+  var isShadow = false;
+  while (el.parentNode != null) {
+    // console.log(el.nodeName);
+    var sibCount = 0;
+    var sibIndex = 0;
+    // get sibling indexes
+    for ( var i = 0; i < el.parentNode.childNodes.length; i++ ) {
+      var sib = el.parentNode.childNodes[i];
+      if ( sib.nodeName == el.nodeName ) {
+        if ( sib === el ) {
+          sibIndex = sibCount;
+        }
+        sibCount++;
+      }
+    }
+    // if ( el.hasAttribute('id') && el.id != '' ) { no id shortcuts, ids are not unique in shadowDom
+    //   stack.unshift(el.nodeName.toLowerCase() + '#' + el.id);
+    // } else
+    var nodeName = el.nodeName.toLowerCase();
+    if (isShadow) {
+      nodeName += "::shadow";
+      isShadow = false;
+    }
+    if ( sibCount > 1 ) {
+      stack.unshift(nodeName + ':nth-of-type(' + (sibIndex + 1) + ')');
+    } else {
+      stack.unshift(nodeName);
+    }
+    el = el.parentNode;
+    if (el.nodeType === 11) { // for shadow dom, we
+      isShadow = true;
+      el = el.host;
+    }
+  }
+  stack.splice(0,1); // removes the html element
+  return stack.join(' > ');
+}
+if(document.readyState !== 'complete') {
+    window.addEventListener('load',afterWindowLoaded);
+} else {
+    afterWindowLoaded();
+}
+
+function afterWindowLoaded(){
+    //Everything that needs to happen after the window is fully loaded.
+     console.log("load fire")
+    var key = window.location.href
+    chrome.storage.sync.get(key).then((result) => {
+      // console.log(result[key])
+      var a = result[key]
+      for (var i = a.length - 1; i >= 0; i--) {
+        var element = document.querySelector(a[i])
+        element && element.remove()
+      }
+    });
+}
